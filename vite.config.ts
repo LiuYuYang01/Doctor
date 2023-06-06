@@ -11,10 +11,15 @@ export default defineConfig({
     vue(),
     Components({
       resolvers: [VantResolver()],
-    }),],
+    })
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  'postcss-px-to-viewport': {
+    // 设备宽度375计算vw的值
+    viewportWidth: 375,
+  },
 })
