@@ -2,12 +2,14 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { User } from '@/types/User'
 
-const userStore = defineStore('user', () => {
-    const user = ref<User>("hello")
+export const useUserStore = defineStore('user', () => {
+    const user = ref<any>()
 
     // 修改用户信息
-    const updateUser = (data: User) => {
-        user.value = data
+    const setUser = (data: User) => {
+        console.log(data.data,444);
+        
+        user.value = data.data
     }
 
     // 清空用户，退出后使用
@@ -15,7 +17,5 @@ const userStore = defineStore('user', () => {
         user.value = undefined
     }
 
-    return { user, updateUser, delUser }
+    return { user, setUser, delUser }
 }, { persist: true })
-
-export default userStore
