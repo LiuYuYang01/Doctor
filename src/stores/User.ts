@@ -16,6 +16,6 @@ const userStore = defineStore('user', () => {
     }
 
     return { user, updateUser, delUser }
-})
+}, { persist: true })
 
 export default userStore
