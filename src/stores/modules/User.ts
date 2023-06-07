@@ -3,13 +3,11 @@ import { ref } from 'vue'
 import type { User } from '@/types/User'
 
 export const useUserStore = defineStore('user', () => {
-    const user = ref<any>()
+    const user = ref<User>()
 
     // 修改用户信息
     const setUser = (data: User) => {
-        console.log(data.data,444);
-        
-        user.value = data.data
+        user.value = data
     }
 
     // 清空用户，退出后使用

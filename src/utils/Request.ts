@@ -2,14 +2,12 @@ import axios from 'axios'
 import { useUserStore } from '@/stores'
 import router from '@/router'
 import { showToast } from 'vant'
-import type { User } from '@/types/User'
-// const store = useUserStore()
+import type { Response } from '@/types/Response'
 
 // 创建 axios 实例
 const instance = axios.create({
     // 项目API根路径
-    // baseURL: "https://consult-api.itheima.net",
-    baseURL: "https://cnodejs.org/api/v1",
+    baseURL: "https://consult-api.itheima.net",
     // 请求超时的时间
     timeout: 5000
 })
@@ -20,9 +18,9 @@ instance.interceptors.request.use(
         const store = useUserStore()
 
         // 如果有token就把赋值给请求头
-        // if (store.user?.token) {
-        //     config.headers['Authorization'] = `Bearer ${store.user?.token}`
-        // }
+        if (store.user?.token) {
+            config.headers['Authorization'] = `Bearer ${store.user?.token}`
+        }
 
         return config
     },
@@ -35,11 +33,11 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
     res => {
         // 只要code不等于10000,就相当于响应失败
-        // if (res.data?.code !== 10000) {
-        //     showToast(res.data?.message || "未知错误")
+        if (res.data?.code !== 10000) {
+            showToast(res.data?.message || "未知错误")
 
-        //     Promise.reject(res.data)
-        // }
+            Promise.reject(res.data)
+        }
 
         return res.data
     },
@@ -64,7 +62,7 @@ instance.interceptors.response.use(
 
 // 如果是GET传参就自动识别为query，POST为data
 const Request = <T>(method: string, url: string, reqParams?: object) => {
-    return instance.request<any, T>({
+    return instance.request<T, Response<T>>({
         method, url,
         [method.toLocaleUpperCase() === "GET" ? "query" : "data"]: reqParams
     })
