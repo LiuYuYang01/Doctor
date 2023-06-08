@@ -1,4 +1,23 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { showToast } from 'vant';
+import { ref } from 'vue';
+
+// 用户信息
+const loginInfo = ref({
+  mobile: "",
+  password: "",
+  agree: false
+})
+
+// 用户登录
+const login = () => {
+  console.log(loginInfo.value.agree, 222);
+
+  if (!loginInfo.value.agree) return showToast('请勾选我已同意')
+  
+  // 验证完毕，进行登录
+}
+</script>
 
 <template>
   <div class="login-page">
@@ -14,12 +33,19 @@
     </div>
 
     <!-- 表单 -->
-    <van-form autocomplete="off">
-      <van-field placeholder="请输入手机号" type="tel"></van-field>
-      <van-field placeholder="请输入密码" type="password"></van-field>
+    <van-form autocomplete="off" @submit="login">
+      <van-field placeholder="请输入手机号" type="tel" v-model="loginInfo.mobile" :rules="[
+        { required: true, message: '请输入手机号' },
+        { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' }
+      ]" />
+
+      <van-field placeholder="请输入密码" type="password" v-model="loginInfo.password" :rules="[
+        { required: true, message: '请输入密码' },
+        { pattern: /^\w\d{8,24}/, message: '密码必须是8 ~ 24个字符' }
+      ]" />
 
       <div class="cp-cell">
-        <van-checkbox>
+        <van-checkbox v-model="loginInfo.agree">
           <span>我已同意</span>
           <a href="javascript:;">用户协议</a>
           <span>及</span>
@@ -28,7 +54,7 @@
       </div>
 
       <div class="cp-cell">
-        <van-button block round type="primary">登 录</van-button>
+        <van-button block round type="primary" native-type="submit">登 录</van-button>
       </div>
 
       <div class="cp-cell">
@@ -39,7 +65,7 @@
     <!-- 底部 -->
     <div class="login-other">
       <van-divider>第三方登录</van-divider>
-      
+
       <div class="icon">
         <img src="@/assets/qq.svg" alt="" />
       </div>

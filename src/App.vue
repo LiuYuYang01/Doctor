@@ -24,6 +24,8 @@ const btn = async () => {
 
   <button @click="btn">发起网络请求</button> -->
 
+  <button @click="$router.push('/login')">去登录</button>
+
   <RouterView />
 </template>
 
