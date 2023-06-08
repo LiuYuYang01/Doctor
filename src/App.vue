@@ -24,8 +24,6 @@ const btn = async () => {
 
   <button @click="btn">发起网络请求</button> -->
 
-  <CpNavBar />
-
   <RouterView />
 </template>
 

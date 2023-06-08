@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import router from '@/router';
+import { useRouter } from 'vue-router';
 
 const props = defineProps<{ title?: string, rightText?: string }>()
 const emit = defineEmits<{ (e: "click-right"): void }>()
+const router = useRouter()
 
 // TODO 点击左侧返回按钮
 const onClickLeft = () => {
