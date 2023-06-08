@@ -64,7 +64,7 @@ instance.interceptors.response.use(
 const Request = <T>(method: string, url: string, reqParams?: object) => {
     return instance.request<T, Response<T>>({
         method, url,
-        [method.toLocaleUpperCase() === "GET" ? "query" : "data"]: reqParams
+        [method.toLocaleUpperCase() === "GET" ? "parame" : "data"]: reqParams
     })
 }
 

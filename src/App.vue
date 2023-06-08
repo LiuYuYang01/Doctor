@@ -18,11 +18,13 @@ const btn = async () => {
 </script>
 
 <template>
-  <div>{{ store.user }}</div>
+  <!-- <div>{{ store.user }}</div>
   <button @click="store.setUser({ id: '1', mobile: '1', account: '1', avatar: '1', token: '1' })">登录</button>
   <button @click="store.delUser()">删除</button>
 
-  <button @click="btn">发起网络请求</button>
+  <button @click="btn">发起网络请求</button> -->
+
+  <CpNavBar />
 
   <RouterView />
 </template>
