@@ -10,6 +10,8 @@ import 'vant/lib/index.css'
 // 自定义的样式
 import '@/styles/main.scss'
 
+import 'virtual:svg-icons-register'
+
 const app = createApp(App)
 
 app.use(pinia)

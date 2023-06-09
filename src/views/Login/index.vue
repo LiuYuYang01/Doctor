@@ -74,7 +74,7 @@ const sendCode = async () => {
 
 <template>
   <div class="login-page">
-    <CpNavBar right-text="注册" @click-right="router.push('/register')"></CpNavBar>
+    <CpNavBar right-text="注册" @click-right="router.push('/register')" />
 
     <!-- 头部 -->
     <div class="login-head">
