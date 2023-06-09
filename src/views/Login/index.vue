@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { showNotify, showToast } from 'vant';
+import { showNotify, showToast, type FormInstance } from 'vant';
 import { reactive, ref } from 'vue';
 
 import { useUserStore } from '@/stores'
@@ -15,15 +15,28 @@ import type { User } from '@/types/User'
 const loginInfo = reactive({
   mobile: "",
   password: "",
-  agree: false
+  code: "",
+  agree: false,
 })
+
+// 密码 / 验证码切换
+const isPass = ref<boolean>(true)
 
 // 用户登录
 const login = async () => {
   if (!loginInfo.agree) return showToast('请勾选我已同意')
 
   // 验证完毕，进行登录
-  const { code, data } = await Request<User>('POST', "/login/password", { mobile: loginInfo.mobile, password: loginInfo.password })
+  let res: any;
+  if (isPass.value) {
+    // 密码登录
+    res = await Request<User>('POST', '/login/password', { mobile: loginInfo.mobile, password: loginInfo.password })
+  } else {
+    // 验证码登录
+    res = await Request<User>('POST', '/login', { mobile: loginInfo.mobile, code: loginInfo.code })
+  }
+
+  const { code, data } = res
 
   // 处理登录失败
   if (code !== 10000) return showNotify("登录失败")
@@ -38,10 +51,34 @@ const login = async () => {
   router.push(<string>route.query.returnUrl || '/user')
 }
 
-// 密码 / 验证码切换
-const isPass = ref(true)
+// 验证码时间
+const time = ref<number>(0)
+// 表单实例
+const form = ref<FormInstance>()
 
+// 发送验证码
+const sendCode = async () => {
+  if (time.value > 0) return
 
+  // 校验手机号是否合法
+  await form.value?.validate("mobile")
+
+  // 验证码登录
+  const res = await Request<User>('GET', "/code", { mobile: loginInfo.mobile, type: "login" })
+
+  console.log("接口响应的数据：", res);
+  console.log("表单的数据：", { mobile: loginInfo.mobile, type: "login" });
+
+  time.value = 60
+
+  let timeId: number = 0
+  // 清除定时器
+  clearInterval(timeId)
+  // 时间不断减减
+  timeId = setInterval(() => {
+    time.value--
+  }, 1000)
+}
 </script>
 
 <template>
@@ -59,8 +96,8 @@ const isPass = ref(true)
     </div>
 
     <!-- 表单 -->
-    <van-form autocomplete="off" @submit="login">
-      <van-field placeholder="请输入手机号" type="tel" v-model="loginInfo.mobile" :rules="[
+    <van-form autocomplete="off" ref="form" @submit="login">
+      <van-field placeholder="请输入手机号" type="tel" v-model="loginInfo.mobile" name="mobile" :rules="[
         { required: true, message: '请输入手机号' },
         { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' }
       ]" />
@@ -72,12 +109,12 @@ const isPass = ref(true)
       ]" v-if="isPass" />
 
       <!-- 验证码登录 -->
-      <van-field placeholder="短信验证码" :rules="[
+      <van-field placeholder="短信验证码" v-model="loginInfo.code" :rules="[
         { required: true, message: '请输入验证码' },
         { pattern: /^\d{6}$/, message: '验证码 6 个数字' }
       ]" v-else>
         <template #button>
-          <span class="btn-send">发送验证码</span>
+          <span class="btn-send" @click="sendCode">{{ time > 0 ? `${time}秒后再次发送` : "发送验证码" }}</span>
         </template>
       </van-field>
 
