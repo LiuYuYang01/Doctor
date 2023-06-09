@@ -27,16 +27,7 @@ const login = async () => {
   if (!loginInfo.agree) return showToast('请勾选我已同意')
 
   // 验证完毕，进行登录
-  let res: any;
-  if (isPass.value) {
-    // 密码登录
-    res = await Request<User>('POST', '/login/password', { mobile: loginInfo.mobile, password: loginInfo.password })
-  } else {
-    // 验证码登录
-    res = await Request<User>('POST', '/login', { mobile: loginInfo.mobile, code: loginInfo.code })
-  }
-
-  const { code, data } = res
+  const { code, data } = isPass.value ? await Request<User>('POST', '/login/password', { mobile: loginInfo.mobile, password: loginInfo.password }) : await Request<User>('POST', '/login', { mobile: loginInfo.mobile, code: loginInfo.code })
 
   // 处理登录失败
   if (code !== 10000) return showNotify("登录失败")
