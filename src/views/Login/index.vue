@@ -1,33 +1,59 @@
 <script setup lang="ts">
-import { showToast } from 'vant';
-import { ref } from 'vue';
+import { showNotify, showToast } from 'vant';
+import { reactive, ref } from 'vue';
+
+import { useUserStore } from '@/stores'
+import Request from '@/utils/Request';
+const store = useUserStore()
+
+import { useRouter, useRoute } from 'vue-router'
+const [route, router] = [useRoute(), useRouter()]
+
+import type { User } from '@/types/User'
 
 // 用户信息
-const loginInfo = ref({
+const loginInfo = reactive({
   mobile: "",
   password: "",
   agree: false
 })
 
 // 用户登录
-const login = () => {
-  console.log(loginInfo.value.agree, 222);
+const login = async () => {
+  if (!loginInfo.agree) return showToast('请勾选我已同意')
 
-  if (!loginInfo.value.agree) return showToast('请勾选我已同意')
-  
   // 验证完毕，进行登录
+  const { code, data } = await Request<User>('POST', "/login/password", { mobile: loginInfo.mobile, password: loginInfo.password })
+
+  // 处理登录失败
+  if (code !== 10000) return showNotify("登录失败")
+
+  // 登录成功提示
+  showNotify({ type: 'primary', message: '登录成功~' })
+
+  // 将用户的信息保存到pinia
+  store.setUser(data)
+
+  // 如果有回跳地址就进行回跳，没有跳转到个人中心
+  router.push(<string>route.query.returnUrl || '/user')
 }
+
+// 密码 / 验证码切换
+const isPass = ref(true)
+
+
 </script>
 
 <template>
   <div class="login-page">
-    <CpNavBar right-text="注册" @click-right="$router.push('/register')"></CpNavBar>
+    <CpNavBar right-text="注册" @click-right="router.push('/register')"></CpNavBar>
 
     <!-- 头部 -->
     <div class="login-head">
-      <h3>密码登录</h3>
-      <a href="javascript:;">
-        <span>短信验证码登录</span>
+      <h3>{{ isPass ? "密码登录" : "短信验证码登录" }}</h3>
+
+      <a href="javascript:;" @click="isPass = !isPass">
+        <span>{{ !isPass ? "密码登录" : "短信验证码登录" }}</span>
         <van-icon name="arrow"></van-icon>
       </a>
     </div>
@@ -39,10 +65,21 @@ const login = () => {
         { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' }
       ]" />
 
+      <!-- 密码登录 -->
       <van-field placeholder="请输入密码" type="password" v-model="loginInfo.password" :rules="[
         { required: true, message: '请输入密码' },
-        { pattern: /^\w\d{8,24}/, message: '密码必须是8 ~ 24个字符' }
-      ]" />
+        { pattern: /^[\w\d]{8,24}/, message: '密码必须是8 ~ 24个字符' }
+      ]" v-if="isPass" />
+
+      <!-- 验证码登录 -->
+      <van-field placeholder="短信验证码" :rules="[
+        { required: true, message: '请输入验证码' },
+        { pattern: /^\d{6}$/, message: '验证码 6 个数字' }
+      ]" v-else>
+        <template #button>
+          <span class="btn-send">发送验证码</span>
+        </template>
+      </van-field>
 
       <div class="cp-cell">
         <van-checkbox v-model="loginInfo.agree">
