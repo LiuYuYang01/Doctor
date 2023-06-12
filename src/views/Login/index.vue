@@ -11,6 +11,9 @@ const [route, router] = [useRoute(), useRouter()]
 
 import type { User } from '@/types/User'
 
+// 控制密码框显示隐藏
+const show = ref<boolean>(false)
+
 // 用户信息
 const loginInfo = reactive({
   mobile: "",
@@ -94,10 +97,15 @@ const sendCode = async () => {
       ]" />
 
       <!-- 密码登录 -->
-      <van-field placeholder="请输入密码" type="password" v-model="loginInfo.password" :rules="[
+      <van-field placeholder="请输入密码" :type="show ? 'text' : 'password'" v-model="loginInfo.password" :rules="[
         { required: true, message: '请输入密码' },
         { pattern: /^[\w\d]{8,24}/, message: '密码必须是8 ~ 24个字符' }
-      ]" v-if="isPass" />
+      ]" v-if="isPass">
+
+        <template #button>
+          <CpIcon :name="`login-eye-${show ? 'on' : 'off'}`" @click="show = !show" />
+        </template>
+      </van-field>
 
       <!-- 验证码登录 -->
       <van-field placeholder="短信验证码" v-model="loginInfo.code" :rules="[
@@ -204,5 +212,12 @@ const sendCode = async () => {
       color: rgba(22, 194, 163, 0.5);
     }
   }
+}
+
+:deep(.van-field__button) {
+  position: relative;
+  top: 2px;
+  padding-right: 15px;
+  font-size: 20px;
 }
 </style>
