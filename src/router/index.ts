@@ -37,4 +37,12 @@ const router = createRouter({
   ]
 })
 
+// 访问权限控制
+router.beforeEach(to => {
+  console.log(to);
+  
+  // 处理页面标题
+  document.title = `优医问诊 - ${to.meta.title || ''}`
+})
+
 export default router
