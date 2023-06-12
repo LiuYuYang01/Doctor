@@ -44,3 +44,8 @@ ol {
     margin: 0;
     padding: 0;
 }
+
+// 进度条
+#nprogress .bar {
+    background-color: var(--cp-primary) !important;
+}
