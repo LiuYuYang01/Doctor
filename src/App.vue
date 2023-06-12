@@ -4,7 +4,7 @@
 
 <template>
   <button @click="$router.push('/login')">去登录</button>
-  <CpIcon name="login-eye-on" />
+  <CpIcon name="consult-alipay" />
 
   <RouterView />
 </template>
