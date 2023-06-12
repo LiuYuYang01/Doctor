@@ -16,8 +16,8 @@ const show = ref<boolean>(false)
 
 // 用户信息
 const loginInfo = reactive({
-  mobile: "",
-  password: "",
+  mobile: "13230000100",
+  password: "abc12345",
   code: "",
   agree: false,
 })

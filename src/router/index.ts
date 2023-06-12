@@ -3,7 +3,9 @@ import { useUserStore } from '@/stores'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
+// NProgress配置信息
 NProgress.configure({
+  // 取消圆形加载图标
   showSpinner: false
 })
 
