@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { getUserInfo } from '@/api/User'
+
+getUserInfo().then(res=>{
+    console.log(res);
+})
+</script>
 
 <template>
     <div class="user-page">
