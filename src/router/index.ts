@@ -1,5 +1,7 @@
+import { useUserStore } from '@/stores'
 import { createRouter, createWebHistory } from 'vue-router'
 
+// 路由配置
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -39,10 +41,18 @@ const router = createRouter({
 
 // 访问权限控制
 router.beforeEach(to => {
-  console.log(to);
-  
   // 处理页面标题
   document.title = `优医问诊 - ${to.meta.title || ''}`
+
+  // 用户仓库
+  const store = useUserStore()
+
+  // 白名单：不需要登录就能访问的页面
+  const wihteList = ["/login"]
+
+  // 如果没有token就意味着没有登录 并且 在没有登录情况下会自动跳转到登录页
+  if (!store.user?.token && !wihteList.includes(to.path)) return "/login"
+  // 如果已登录，则跳转到指定的页面
 })
 
 export default router
