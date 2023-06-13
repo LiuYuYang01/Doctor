@@ -129,7 +129,7 @@ const logout = async () => {
             </van-cell>
         </div>
 
-        <a class="logout" href="javascript:;" @click="logout">退出登录</a>
+        <van-button type="primary" class="logout" @click="logout">退出登录</van-button>
     </div>
 </template>
 
@@ -250,10 +250,10 @@ const logout = async () => {
 
     .logout {
         display: block;
+        width: 100%;
         margin: 20px auto;
-        width: 100px;
         text-align: center;
-        color: var(--cp-price);
+        color: #fff;
     }
 }
 </style>
