@@ -1,32 +1,43 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import type { Patient } from '@/types/User';
+import { getPatientList } from '@/api/User';
+
+// 患者信息
+const list = ref<Patient[]>([])
+
+// 获取患者信息
+const loadList = async () => {
+    const { data } = await getPatientList()
+    list.value = data
+}
+
+onMounted(() => {
+    loadList()
+})
+</script>
 
 <template>
     <div class="patient-page">
         <cp-nav-bar title="家庭档案"></cp-nav-bar>
         <div class="patient-list">
-            <div class="patient-item">
+            <div class="patient-item" v-for="item in list" :key="item.id">
                 <div class="info">
-                    <span class="name">李富贵</span>
-                    <span class="id">321111********6164</span>
-                    <span>男</span>
-                    <span>32岁</span>
+                    <span class="name">{{ item.name }}</span>
+                    <span class="id">{{ item.idCard.replace(/^(.{6}).+(.{4})$/, '\$1******\$2') }}</span>
+                    <span>{{ item.genderValue }}</span>
+                    <span>{{ item.age }}岁</span>
                 </div>
+
                 <div class="icon"><cp-icon name="user-edit" /></div>
-                <div class="tag">默认</div>
+                <div class="tag" v-if="item.defaultFlag === 1">默认</div>
             </div>
-            <div class="patient-item">
-                <div class="info">
-                    <span class="name">李富贵</span>
-                    <span class="id">321333********6164</span>
-                    <span>男</span>
-                    <span>32岁</span>
-                </div>
-                <div class="icon"><cp-icon name="user-edit" /></div>
-            </div>
+
             <div class="patient-add">
                 <cp-icon name="user-add" />
                 <p>添加患者</p>
             </div>
+            
             <div class="patient-tip">最多可添加 6 人</div>
         </div>
     </div>
