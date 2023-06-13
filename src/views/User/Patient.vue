@@ -15,11 +15,21 @@ const loadList = async () => {
 onMounted(() => {
     loadList()
 })
+
+// 默认选中的性别
+const gender = ref(1)
+
+// 性别
+const options = [
+    { label: '男', value: 1 },
+    { label: '女', value: 0 }
+]
 </script>
 
 <template>
     <div class="patient-page">
-        <cp-nav-bar title="家庭档案"></cp-nav-bar>
+        <CpNavBar title="家庭档案"></CpNavBar>
+
         <div class="patient-list">
             <div class="patient-item" v-for="item in list" :key="item.id">
                 <div class="info">
@@ -37,9 +47,11 @@ onMounted(() => {
                 <cp-icon name="user-add" />
                 <p>添加患者</p>
             </div>
-            
+
             <div class="patient-tip">最多可添加 6 人</div>
         </div>
+
+        <CpRadioBtn :options="options" :modelValue="gender"/>
     </div>
 </template>
 
