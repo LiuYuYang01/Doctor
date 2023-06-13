@@ -1,37 +1,47 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import type { UserInfo } from '@/types/User';
 import { getUserInfo } from '@/api/User'
 
-getUserInfo().then(res=>{
-    console.log(res);
+const userInfo = ref<UserInfo>()
+
+// 获取用户信息
+onMounted(async () => {
+    const { data } = await getUserInfo()
+    userInfo.value = data
 })
 </script>
 
 <template>
-    <div class="user-page">
+    <div class="user-page" v-if="userInfo">
         <div class="user-page-head">
             <div class="top">
-                <van-image round fit="cover"
-                    src="https://yanxuan-item.nosdn.127.net/ef302fbf967ea8f439209bd747738aba.png" />
+                <van-image round fit="cover" :src="userInfo.avatar" />
+
                 <div class="name">
-                    <p>用户907456</p>
+                    <p>{{ userInfo.account }}</p>
                     <p><van-icon name="edit" /></p>
                 </div>
             </div>
+
             <van-row>
                 <van-col span="6">
-                    <p>150</p>
+                    <p>{{ userInfo.collectionNumber }}</p>
                     <p>收藏</p>
                 </van-col>
+
                 <van-col span="6">
-                    <p>23</p>
+                    <p>{{ userInfo.likeNumber }}</p>
                     <p>关注</p>
                 </van-col>
+
                 <van-col span="6">
-                    <p>270</p>
+                    <p>{{ userInfo.score }}</p>
                     <p>积分</p>
                 </van-col>
+
                 <van-col span="6">
-                    <p>3</p>
+                    <p>{{ userInfo.couponNumber }}</p>
                     <p>优惠券</p>
                 </van-col>
             </van-row>
@@ -43,19 +53,30 @@ getUserInfo().then(res=>{
             </div>
             <van-row>
                 <van-col span="6">
-                    <cp-icon name="user-paid" />
+                    <van-badge :content="userInfo.orderInfo.paidNumber || ''">
+                        <CpIcon name="user-paid" />
+                    </van-badge>
                     <p>待付款</p>
                 </van-col>
+
                 <van-col span="6">
-                    <cp-icon name="user-shipped" />
+                    <van-badge :content="userInfo.orderInfo.shippedNumber || ''">
+                        <cp-icon name="user-shipped" />
+                    </van-badge>
                     <p>待发货</p>
                 </van-col>
+
                 <van-col span="6">
-                    <cp-icon name="user-received" />
+                    <van-badge :content="userInfo.orderInfo.receivedNumber || ''">
+                        <cp-icon name="user-received" />
+                    </van-badge>
                     <p>待收货</p>
                 </van-col>
+
                 <van-col span="6">
-                    <cp-icon name="user-finished" />
+                    <van-badge :content="userInfo.orderInfo.finishedNumber || ''">
+                        <cp-icon name="user-finished" />
+                    </van-badge>
                     <p>已完成</p>
                 </van-col>
             </van-row>
