@@ -124,8 +124,8 @@ const logout = async () => {
         <!-- 快捷工具 -->
         <div class="user-page-group">
             <h3>快捷工具</h3>
-            <van-cell :title="label" is-link :border="false" :to="path" v-for="{ label, path } in tools">
-                <template #icon><cp-icon name="user-tool-01" /></template>
+            <van-cell :title="label" is-link :border="false" :to="path" v-for="{ label, path }, index in tools">
+                <template #icon><cp-icon :name="`user-tool-0${index + 1}`" /></template>
             </van-cell>
         </div>
 
