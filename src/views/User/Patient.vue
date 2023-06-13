@@ -66,6 +66,25 @@ const showPopup = () => {
     <!-- 侧边栏 -->
     <van-popup v-model:show="show" position="right" :style="{ width: '100%', height: '100%' }">
         <CpNavBar title="添加患者" right-text="保存" :back="() => show = false"></CpNavBar>
+
+        <van-form autocomplete="off" ref="form">
+            <van-field label="真实姓名" placeholder="请输入真实姓名" />
+
+            <van-field label="身份证号" placeholder="请输入身份证号" />
+
+            <van-field label="性别" class="pb4">
+                <!-- 单选按钮组件 -->
+                <template #input>
+                    <CpRadioBtn :options="options" />
+                </template>
+            </van-field>
+
+            <van-field label="默认就诊人">
+                <template #input>
+                    <van-checkbox :icon-size="18" round />
+                </template>
+            </van-field>
+        </van-form>
     </van-popup>
 </template>
 
