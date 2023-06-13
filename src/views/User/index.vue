@@ -129,7 +129,7 @@ const logout = async () => {
             </van-cell>
         </div>
 
-        <van-button type="primary" class="logout" @click="logout">退出登录</van-button>
+        <van-button type="primary" class="logout" round @click="logout">退出登录</van-button>
     </div>
 </template>
 

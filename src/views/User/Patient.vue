@@ -24,6 +24,13 @@ const options = [
     { label: '男', value: 1 },
     { label: '女', value: 0 }
 ]
+
+
+// 打开侧滑栏
+const show = ref(false)
+const showPopup = () => {
+    show.value = true
+}
 </script>
 
 <template>
@@ -43,7 +50,7 @@ const options = [
                 <div class="tag" v-if="item.defaultFlag === 1">默认</div>
             </div>
 
-            <div class="patient-add">
+            <div class="patient-add" v-if="list.length < 6" @click="showPopup()">
                 <cp-icon name="user-add" />
                 <p>添加患者</p>
             </div>
@@ -51,8 +58,15 @@ const options = [
             <div class="patient-tip">最多可添加 6 人</div>
         </div>
 
-        <CpRadioBtn :options="options" :modelValue="gender" @update:model-value="gender = $event" />
+        <!-- <CpRadioBtn :options="options" :modelValue="gender" @update:modelValue="gender = $event" /> -->
+        <!-- 简写：上述双向绑定方式等价于下述代码 -->
+        <CpRadioBtn :options="options" v-model="gender" />
     </div>
+
+    <!-- 侧边栏 -->
+    <van-popup v-model:show="show" position="right" :style="{ width: '100%', height: '100%' }">
+        <CpNavBar title="添加患者" right-text="保存" :back="() => show = false"></CpNavBar>
+    </van-popup>
 </template>
 
 <style lang="scss" scoped>
@@ -150,5 +164,16 @@ const options = [
 
 .pb4 {
     padding-bottom: 4px;
+}
+
+.patient-page {
+    padding: 46px 0 80px;
+
+    :deep() {
+        .van-popup {
+            width: 80%;
+            height: 100%;
+        }
+    }
 }
 </style>

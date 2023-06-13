@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 
-const props = defineProps<{ title?: string, rightText?: string }>()
+const props = defineProps<{ title?: string, rightText?: string, back?: () => boolean }>()
 const emit = defineEmits<{ (e: "click-right"): void }>()
 const router = useRouter()
 
 // TODO 点击左侧返回按钮
 const onClickLeft = () => {
+    // 不刷新页面情况下返回上一级
+    if (props.back) {
+        return props.back()
+    }
+
     // 通过history.state.back判断是否有上一级
     if (history.state.back) {
         // 如果有就回退到上一个页面
