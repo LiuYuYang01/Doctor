@@ -2,6 +2,9 @@
 import { onMounted, ref } from 'vue';
 import type { UserInfo } from '@/types/User';
 import { getUserInfo } from '@/api/User'
+import { useUserStore } from '@/stores';
+import { useRouter } from 'vue-router';
+import { showConfirmDialog, showNotify } from 'vant';
 
 const userInfo = ref<UserInfo>()
 
@@ -11,6 +14,7 @@ onMounted(async () => {
     userInfo.value = data
 })
 
+// 快捷工具
 const tools = [
     { label: '我的问诊', path: '/user/consult' },
     { label: '我的处方', path: '/' },
@@ -20,10 +24,33 @@ const tools = [
     { label: '官方客服', path: '/' },
     { label: '设置', path: '/' }
 ]
+
+const store = useUserStore()
+const router = useRouter()
+
+// 退出登录
+const logout = async () => {
+    // 消息确认框
+    showConfirmDialog({
+        title: "温馨提示",
+        message: "您缺点要退出优医问诊吗？"
+    }).then(() => {
+        // 清除用户信息
+        store.delUser()
+        // 跳转到登录页
+        router.push("/login")
+
+        // 消息提示
+        showNotify({ type: 'primary', message: '退出登录成功~' });
+    }).catch(() => {
+        console.log("取消");
+    })
+}
 </script>
 
 <template>
     <div class="user-page" v-if="userInfo">
+        <!-- 我的信息 -->
         <div class="user-page-head">
             <div class="top">
                 <van-image round fit="cover" :src="userInfo.avatar" />
@@ -57,6 +84,7 @@ const tools = [
             </van-row>
         </div>
 
+        <!-- 我的订单 -->
         <div class="user-page-order">
             <div class="head">
                 <h3>药品订单</h3>
@@ -93,12 +121,15 @@ const tools = [
             </van-row>
         </div>
 
+        <!-- 快捷工具 -->
         <div class="user-page-group">
             <h3>快捷工具</h3>
             <van-cell :title="label" is-link :border="false" :to="path" v-for="{ label, path } in tools">
                 <template #icon><cp-icon name="user-tool-01" /></template>
             </van-cell>
         </div>
+
+        <a class="logout" href="javascript:;" @click="logout">退出登录</a>
     </div>
 </template>
 
