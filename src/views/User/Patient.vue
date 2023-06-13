@@ -17,7 +17,7 @@ onMounted(() => {
 })
 
 // 默认选中的性别
-const gender = ref(1)
+const gender = ref<string | number>(1)
 
 // 性别
 const options = [
@@ -51,7 +51,7 @@ const options = [
             <div class="patient-tip">最多可添加 6 人</div>
         </div>
 
-        <CpRadioBtn :options="options" :modelValue="gender"/>
+        <CpRadioBtn :options="options" :modelValue="gender" @update:model-value="gender = $event" />
     </div>
 </template>
 
