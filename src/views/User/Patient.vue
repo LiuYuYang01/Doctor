@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import type { Patient } from '@/types/User';
-import { addPatientAPI, getPatientAPI, editPatientAPI } from '@/api/Patient'
+import { addPatientAPI, getPatientAPI, editPatientAPI, delPatientAPI } from '@/api/Patient'
 import { nameRules, idCardRules } from '@/utils/Rules'
 import { type FormInstance, showConfirmDialog, showNotify } from 'vant';
 
@@ -99,11 +99,25 @@ const onSubmit = async () => {
     show.value = false
 
     // 消息提示
-    showNotify({ type: 'primary', message: patient.value.id ? '编辑患者成功' : '新增患者成功' });
+    showNotify({ type: 'primary', message: patient.value.id ? '编辑患者成功' : '新增患者成功', background: "#16c2a3" });
 }
 
-
-showNotify({ type: "primary", message: "编辑患者成功" });
+// 删除患者
+const remove = () => {
+    showConfirmDialog({
+        title: '警告',
+        message: '你确定要删除该患者吗？',
+    }).then(async () => {
+        // 调用删除患者接口
+        await delPatientAPI(patient.value.id!)
+        // 关闭侧边框
+        show.value = false
+        // 重新获取数据
+        getPatientList()
+        // 消息提示
+        showNotify({ type: 'primary', message: '删除患者成功', background: "#16c2a3" });
+    })
+}
 </script>
 
 <template>
@@ -139,7 +153,8 @@ showNotify({ type: "primary", message: "编辑患者成功" });
 
     <!-- 侧边栏 -->
     <van-popup v-model:show="show" position="right" style="width: 100%; height: 100%;">
-        <CpNavBar :title="patient.id ? '编辑患者' : '添加患者'" right-text="保存" :back="() => show = false"></CpNavBar>
+        <CpNavBar :title="patient.id ? '编辑患者' : '添加患者'" right-text="保存" :back="() => show = false" @clickRight="onSubmit">
+        </CpNavBar>
 
         <van-form autocomplete="off" ref="form" style="margin-top: 50px;">
             <van-field v-model="patient.name" label="真实姓名" placeholder="请输入真实姓名" :rules="nameRules" />
@@ -159,7 +174,11 @@ showNotify({ type: "primary", message: "编辑患者成功" });
                 </template>
             </van-field>
 
-            <van-button round block type="primary" native-type="submit" @click="onSubmit">确认提交</van-button>
+            <van-button round block type="primary" native-type="submit" style="margin-top: 30px;" @click="onSubmit"
+                v-if="!patient.id">添加患者</van-button>
+
+            <van-button round block type="danger" native-type="submit" style="margin-top: 30px;" @click="remove"
+                v-else="!patient.id">删除患者</van-button>
         </van-form>
     </van-popup>
 </template>

@@ -9,3 +9,6 @@ export const getPatientAPI = () => Request<Patient[]>("GET", "/patient/mylist")
 
 // 修改患者
 export const editPatientAPI = (patient: Patient) => Request('PUT', '/patient/update', patient)
+
+// 删除患者
+export const delPatientAPI = (id: string) => Request('DELETE', `/patient/del/${id}`)
