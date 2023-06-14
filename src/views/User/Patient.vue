@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import type { Patient } from '@/types/User';
-import { getPatientList } from '@/api/User';
+import { addPatientAPI, getPatientAPI, editPatientAPI } from '@/api/Patient'
 import { nameRules, idCardRules } from '@/utils/Rules'
-import { formProps, type FormInstance, showConfirmDialog, showNotify } from 'vant';
+import { type FormInstance, showConfirmDialog, showNotify } from 'vant';
 
 // 患者信息
 const list = ref<Patient[]>([])
 
 // 获取患者信息
-const loadList = async () => {
-    const { data } = await getPatientList()
+const getPatientList = async () => {
+    const { data } = await getPatientAPI()
     list.value = data
 }
 
 onMounted(() => {
-    loadList()
+    getPatientList()
 })
 
 // 默认选中的性别
@@ -44,11 +44,20 @@ const patient = ref<Patient>({ ...initPatient })
 
 // 打开侧滑栏
 const show = ref(false)
-const showPopup = () => {
-    // 每点击侧滑栏 先初始化数据
-    patient.value = { ...initPatient }
 
+const showPopup = (item?: Patient) => {
     show.value = true
+
+    if (item) {
+        // 编辑患者
+        // 解构出来接口需要的数据
+        const { id, gender, name, idCard, defaultFlag } = item
+        patient.value = { id, gender, name, idCard, defaultFlag }
+    } else {
+        // 添加患者
+        // 每点击侧滑栏 先初始化数据
+        patient.value = { ...initPatient }
+    }
 }
 
 // 默认值需要转换
@@ -71,8 +80,8 @@ const onSubmit = async () => {
     // 对表单进行整体校验
     await from.value?.validate()
 
-    // 判断姓名与性别是否与身份证上的一致
-    
+    // 判断性别是否与身份证上的一致
+
     // 身份证倒数第二位，单数是男，双数是女
     const gender = +patient.value.idCard.slice(-2, -1) % 2
     if (gender !== patient.value.gender) {
@@ -82,8 +91,19 @@ const onSubmit = async () => {
         })
     }
 
-    showNotify({ type: 'primary', message: '添加患者成功' });
+    // 添加 / 编辑患者
+    patient.value.id ? await editPatientAPI(patient.value) : await addPatientAPI(patient.value)
+    // 获取最新数据
+    await getPatientList()
+    // 关闭侧边框
+    show.value = false
+
+    // 消息提示
+    showNotify({ type: 'primary', message: patient.value.id ? '编辑患者成功' : '新增患者成功' });
 }
+
+
+showNotify({ type: "primary", message: "编辑患者成功" });
 </script>
 
 <template>
@@ -99,7 +119,8 @@ const onSubmit = async () => {
                     <span>{{ item.age }}岁</span>
                 </div>
 
-                <div class="icon"><cp-icon name="user-edit" /></div>
+                <!-- 修改按钮 -->
+                <div class="icon" @click="showPopup(item)"><cp-icon name="user-edit" /></div>
                 <div class="tag" v-if="item.defaultFlag === 1">默认</div>
             </div>
 
@@ -118,7 +139,7 @@ const onSubmit = async () => {
 
     <!-- 侧边栏 -->
     <van-popup v-model:show="show" position="right" style="width: 100%; height: 100%;">
-        <CpNavBar title="添加患者" right-text="保存" :back="() => show = false"></CpNavBar>
+        <CpNavBar :title="patient.id ? '编辑患者' : '添加患者'" right-text="保存" :back="() => show = false"></CpNavBar>
 
         <van-form autocomplete="off" ref="form" style="margin-top: 50px;">
             <van-field v-model="patient.name" label="真实姓名" placeholder="请输入真实姓名" :rules="nameRules" />
@@ -138,7 +159,7 @@ const onSubmit = async () => {
                 </template>
             </van-field>
 
-            <van-button round block type="primary" native-type="submit" @click="onSubmit">提交</van-button>
+            <van-button round block type="primary" native-type="submit" @click="onSubmit">确认提交</van-button>
         </van-form>
     </van-popup>
 </template>

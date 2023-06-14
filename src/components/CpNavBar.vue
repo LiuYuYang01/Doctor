@@ -29,7 +29,7 @@ const onClickRight = () => {
 </script>
 
 <template>
-    <van-nav-bar fixed left-arrow title="登录" :right-text="rightText" @click-left="onClickLeft"
+    <van-nav-bar fixed left-arrow :title="title" :right-text="rightText" @click-left="onClickLeft"
         @click-right="onClickRight"></van-nav-bar>
 </template>
 
