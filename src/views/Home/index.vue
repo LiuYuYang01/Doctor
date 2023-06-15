@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import KnowledgeList from './components/KnowledgeList.vue'
 import type { KnowledgeType } from '@/types/consult'
 
-const active = ref<KnowledgeType>("live")
+const active = ref<KnowledgeType>("like")
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 import Request from "@/utils/Request";
-import type { UserInfo, Patient } from '@/types/User'
+import type { UserInfo } from '@/types/User'
 
 // 获取用户信息
-export const getUserInfo = () => Request<UserInfo>("GET", "/patient/myuser")
+export const getUserInfoAPI = () => Request<UserInfo>("GET", "/patient/myuser")

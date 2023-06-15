@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import type { UserInfo } from '@/types/User';
-import { getUserInfo } from '@/api/User'
+import { getUserInfoAPI } from '@/api/User'
 import { useUserStore } from '@/stores';
 import { useRouter } from 'vue-router';
 import { showConfirmDialog, showNotify } from 'vant';
@@ -10,7 +10,9 @@ const userInfo = ref<UserInfo>()
 
 // 获取用户信息
 onMounted(async () => {
-    const { data } = await getUserInfo()
+    const { data } = await getUserInfoAPI()
+    console.log(data,444);
+    
     userInfo.value = data
 })
 
