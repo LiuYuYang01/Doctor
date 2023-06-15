@@ -14,6 +14,7 @@ defineProps<{ item: Knowledge }>()
                     {{ item.creatorHospatalName }} {{ item.creatorDep }} {{ item.creatorTitles }}
                 </p>
             </div>
+            
             <van-button class="btn" size="small" round>
                 {{ item.likeFlag === 1 ? '已关注' : '+ 关注' }}
             </van-button>
