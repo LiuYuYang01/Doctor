@@ -84,21 +84,20 @@ const active = ref<KnowledgeType>("like")
         <!-- tabbar -->
         <van-tabs shrink sticky v-model:active="active">
             <van-tab title="关注" name="like">
-                <KnowledgeList />
+                <KnowledgeList type="like"/>
             </van-tab>
 
             <van-tab title="推荐" name="recommend">
-                <KnowledgeList />
+                <KnowledgeList type="recommend"/>
             </van-tab>
 
             <van-tab title="减脂" name="fatReduction">
-                <KnowledgeList />
+                <KnowledgeList type="fatReduction"/>
             </van-tab>
 
             <van-tab title="饮食" name="food">
-                <KnowledgeList />
+                <KnowledgeList type="food"/>
             </van-tab>
-
         </van-tabs>
     </div>
 </template>
