@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import KnowledgeList from './components/KnowledgeList.vue'
+import FollowDoctor from './components/FollowDoctor.vue'
 import type { KnowledgeType } from '@/types/consult'
 
 const active = ref<KnowledgeType>("like")
@@ -84,19 +85,20 @@ const active = ref<KnowledgeType>("like")
         <!-- tabbar -->
         <van-tabs shrink sticky v-model:active="active">
             <van-tab title="关注" name="like">
-                <KnowledgeList type="like"/>
+                <FollowDoctor />
+                <KnowledgeList type="like" />
             </van-tab>
 
             <van-tab title="推荐" name="recommend">
-                <KnowledgeList type="recommend"/>
+                <KnowledgeList type="recommend" />
             </van-tab>
 
             <van-tab title="减脂" name="fatReduction">
-                <KnowledgeList type="fatReduction"/>
+                <KnowledgeList type="fatReduction" />
             </van-tab>
 
             <van-tab title="饮食" name="food">
-                <KnowledgeList type="food"/>
+                <KnowledgeList type="food" />
             </van-tab>
         </van-tabs>
     </div>
