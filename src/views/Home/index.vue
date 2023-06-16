@@ -2,9 +2,9 @@
 import { ref } from 'vue';
 import KnowledgeList from './components/KnowledgeList.vue'
 import FollowDoctor from './components/FollowDoctor.vue'
-import type { KnowledgeType } from '@/types/consult'
+import type { KnowledgeType } from '@/types/Consult'
 
-const active = ref<KnowledgeType>("like")
+const active = ref<KnowledgeType>("recommend")
 </script>
 
 <template>

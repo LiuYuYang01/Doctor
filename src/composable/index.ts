@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import type { FollowType } from '@/types/Consult'
 import { followDoctorAPI } from '@/api/Consult'
 
-// 封装逻辑 规范使用
+// 封装关注医生逻辑 规范使用
 export const useFollow = (type: FollowType = "doc") => {
     // 加载效果
     const loading = ref<boolean>(false)
