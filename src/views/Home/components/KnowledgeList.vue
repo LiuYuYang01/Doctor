@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import KnowledgeCard from './KnowledgeCard.vue'
-import type { KnowledgeType, KnowledgeParams, KnowledgeList } from '@/types/consult';
+import type { KnowledgeType, KnowledgeParams, KnowledgeList } from '@/types/Consult';
 import { getKnowledgeAPI } from '@/api/Consult'
 
 const props = defineProps<{ type: KnowledgeType }>()

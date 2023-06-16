@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import type { Doctor } from '@/types/consult'
+import type { Doctor } from '@/types/Consult'
 import { followDoctorAPI } from '@/api/Consult'
 
 defineProps<{ item: Doctor }>()

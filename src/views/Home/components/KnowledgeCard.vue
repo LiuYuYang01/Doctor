@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Knowledge } from '@/types/consult'
+import type { Knowledge } from '@/types/Consult'
 
 defineProps<{ item: Knowledge }>()
 </script>
