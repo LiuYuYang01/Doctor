@@ -1,7 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import type { TopDep } from '@/types/Consult'
+import { getAllDep } from '@/api/Consult'
+import { watch } from 'vue';
+
+// 一级科室
+const allDep = ref<TopDep[]>([])
+
+// 获取科室的数据
+onMounted(async () => {
+    const { data } = await getAllDep()
+
+    allDep.value = data
+})
+
 
 const active = ref(0)
+
+// 二级科室，注意：组件初始化没有数据 child 可能拿不到
+const subDep = computed(() => allDep.value[active.value]?.child)
 </script>
 
 <template>
@@ -10,16 +27,11 @@ const active = ref(0)
 
         <div class="wrapper">
             <van-sidebar v-model="active">
-                <van-sidebar-item title="内科" />
-                <van-sidebar-item title="外科" />
-                <van-sidebar-item title="皮肤科" />
-                <van-sidebar-item title="骨科" />
+                <van-sidebar-item :title="top.name" v-for="top in allDep" :key="top.id" />
             </van-sidebar>
 
             <div class="sub-dep">
-                <router-link to="/consult/illness">科室一</router-link>
-                <router-link to="/consult/illness">科室二</router-link>
-                <router-link to="/consult/illness">科室三</router-link>
+                <router-link to="/consult/illness" v-for="sub in subDep" :key="sub.id">{{ sub.name }}</router-link>
             </div>
         </div>
     </div>

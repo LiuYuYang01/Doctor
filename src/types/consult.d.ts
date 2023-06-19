@@ -127,3 +127,16 @@ export type Consult = {
 // 问诊记录-全部可选
 export type PartialConsult = Partial<Consult>
 // Required 转换为全部必须   Partial 转换问全部可选  两个内置的泛型类型
+
+// 科室
+export type SubDep = {
+  // 科室ID
+  id: string
+  // 科室名称
+  name: string
+}
+
+export type TopDep = SubDep & {
+  // 二级科室数组
+  child: SubDep[]
+}

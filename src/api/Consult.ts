@@ -1,4 +1,4 @@
-import type { DoctorPage, FollowType, KnowledgePage, KnowledgeParams, PageParams } from "@/types/consult";
+import type { DoctorPage, FollowType, KnowledgePage, KnowledgeParams, PageParams, TopDep } from "@/types/Consult";
 import Request from "@/utils/Request";
 
 // 知识加载
@@ -9,3 +9,6 @@ export const getDoctorPageAPI = (params: PageParams) => Request<DoctorPage>('GET
 
 // 关注医生
 export const followDoctorAPI = (id: string, type: FollowType = 'doc') => Request<any>('POST', '/like', { id, type })
+
+// 获取科室
+export const getAllDep = () => Request<TopDep[]>('GET', '/dep/all')
