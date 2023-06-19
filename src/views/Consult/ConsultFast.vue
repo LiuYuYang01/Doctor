@@ -1,4 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useConsultStore } from '@/stores'
+
+const store = useConsultStore()
+</script>
 
 <template>
     <div class="consult-fast-page">
@@ -7,8 +11,9 @@
             <img class="img" src="@/assets/consult-fast.png" alt="" />
             <p class="text"><span>20s</span> 快速匹配专业医生</p>
         </div>
+        
         <div class="fast-type">
-            <router-link to="/consult/dep" class="item">
+            <router-link to="/consult/dep" @click@click="store.setIllnessType(1)" class="item">
                 <cp-icon class="pic" name="consult-doctor"></cp-icon>
                 <div class="info">
                     <p>三甲图文问诊</p>
@@ -16,7 +21,8 @@
                 </div>
                 <van-icon name="arrow"></van-icon>
             </router-link>
-            <router-link to="/consult/dep" class="item">
+
+            <router-link to="/consult/dep" @click="store.setIllnessType(0)" class="item">
                 <cp-icon class="pic" name="consult-message"></cp-icon>
                 <div class="info">
                     <p>普通图文问诊</p>
