@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { ConsultIllness } from '@/types/Consult'
 import { IllnessTime } from '@/enums'
 
@@ -57,6 +57,35 @@ const onDeleteImg = (item: UploaderFileListItem) => {
     // 获取需要删除的图片url，再通过filter过滤掉，返回一个新数组
     form.value.pictures = form.value.pictures?.filter(pic => pic.url !== item.url)
 }
+
+
+import { useRouter } from 'vue-router'
+import { showToast } from 'vant'
+import { useConsultStore } from '@/stores'
+const store = useConsultStore()
+const router = useRouter()
+
+// 监听表单中所有值都不为空，按钮就为高亮色
+const disabled = computed(
+    () =>
+        !form.value.illnessDesc ||
+        form.value.illnessTime === undefined ||
+        form.value.consultFlag === undefined
+)
+
+// 提交表单
+const submit = () => {
+    // 判断表单每一项不能为空
+    if (!form.value.illnessDesc) return showToast({ message: "请输入病情描述", className: 'particulars-detail-popup' })
+    if (!form.value.illnessTime) return showToast("请选择症状持续时间")
+    if (!form.value.consultFlag) return showToast("请选择是否已经就诊")
+
+    // 保存数据
+    store.setIllness(form.value)
+
+    // 跳转到档案管理，根据isChange实现选择功能
+    router.push("/user/patient?isChange=1")
+}
 </script>
 
 <template>
@@ -97,9 +126,16 @@ const onDeleteImg = (item: UploaderFileListItem) => {
 
         <p class="tip">上传内容仅医生可见,最多9张图,最大5MB</p>
     </div>
+
+    <van-button :class="{ disabled }" type="primary" block round @click="submit">下一步</van-button>
 </template>
 
 <style lang="scss" scoped>
+.particulars-detail-popup{
+    background-color: red !important;
+    color: #000 !important;
+}
+
 .consult-illness-page {
     padding-top: 46px;
 }
@@ -208,6 +244,18 @@ const onDeleteImg = (item: UploaderFileListItem) => {
                 color: var(--cp-text3);
             }
         }
+    }
+}
+
+.van-button {
+    font-size: 16px;
+    margin-bottom: 30px;
+
+    &.disabled {
+        opacity: 1;
+        background: #fafafa;
+        color: #d9dbde;
+        border: #fafafa;
     }
 }
 </style>

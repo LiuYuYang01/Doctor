@@ -3,20 +3,10 @@ import { ref, onMounted, computed } from 'vue';
 import type { Patient } from '@/types/User';
 import { addPatientAPI, getPatientAPI, editPatientAPI, delPatientAPI } from '@/api/Patient'
 import { nameRules, idCardRules } from '@/utils/Rules'
-import { type FormInstance, showConfirmDialog, showNotify } from 'vant';
+import { type FormInstance, showConfirmDialog, showNotify, formProps, showToast } from 'vant';
 
 // 患者信息
 const list = ref<Patient[]>([])
-
-// 获取患者信息
-const getPatientList = async () => {
-    const { data } = await getPatientAPI()
-    list.value = data
-}
-
-onMounted(() => {
-    getPatientList()
-})
 
 // 默认选中的性别
 const gender = ref<string | number>(1)
@@ -26,9 +16,6 @@ const options = [
     { label: '男', value: 1 },
     { label: '女', value: 0 }
 ]
-
-
-
 
 
 // 表单初始化的数据
@@ -73,12 +60,12 @@ const defaultFlag = computed<number | boolean>({
 
 
 // 表单实例
-const from = ref<FormInstance>()
+const form = ref<FormInstance>()
 
 // 提交表单
 const onSubmit = async () => {
     // 对表单进行整体校验
-    await from.value?.validate()
+    await form.value?.validate()
 
     // 判断性别是否与身份证上的一致
 
@@ -118,14 +105,94 @@ const remove = () => {
         showNotify({ type: 'primary', message: '删除患者成功', background: "#16c2a3" });
     })
 }
+
+import { useConsultStore } from '@/stores'
+import type { Image } from '@/types/Consult'
+const store = useConsultStore()
+
+const fileList = ref<Image[]>([])
+
+// 回显数据
+onMounted(() => {
+    // 判断表单中是否有数据
+    if (store.consult.illnessDesc) {
+        // 有就显示弹框，反之不显示
+        showConfirmDialog({
+            title: "温馨提示",
+            message: "是否恢复您之前填写的病情信息呢？",
+            confirmButtonColor: "var(--cp-primary)"
+        }).then(() => {
+            console.log("yes");
+
+            const { illnessDesc, illnessTime, consultFlag, pictures } = store.consult
+
+            // 数据回显
+            form.value = { illnessDesc, illnessTime, consultFlag, pictures }
+
+            // 图片回显
+            fileList.value = pictures || []
+        }).catch(() => {
+            console.log("no");
+        })
+    }
+})
+
+import { useRoute } from 'vue-router'
+import router from '@/router';
+const route = useRoute()
+// 判断是选择患者还是家庭档案
+const isChange = computed(() => route.query.isChange === '1')
+
+// 点击列表高亮效果
+const patientId = ref<string>()
+
+const selectedPatient = (item: Patient) => {
+    // 如果是选择患者
+    if (isChange.value) {
+        patientId.value = item.id
+    }
+}
+
+// 记录患者ID跳转到待支付页面
+const next = async () => {
+    if (!patientId.value) return showToast("请选就诊患者")
+
+    store.setPatient(patientId.value)
+
+    // 跳转到支付页
+    router.push("/consult/pay")
+}
+
+// 获取患者信息
+const getPatientList = async () => {
+    const { data } = await getPatientAPI()
+    list.value = data
+
+    const defaultFlag = list.value.find((item) => item.defaultFlag === 1)
+    if (defaultFlag) return patientId.value = defaultFlag.id
+
+    // 默认选择
+    patientId.value = list.value[0].id
+}
+
+onMounted(() => {
+    getPatientList()
+})
 </script>
 
 <template>
     <div class="patient-page">
-        <CpNavBar title="家庭档案"></CpNavBar>
+        <CpNavBar :title="isChange ? '选择患者' : '家庭档案'"></CpNavBar>
+
+        <!-- 头部提示 -->
+        <div class="patient-change" v-if="isChange">
+            <h3>请选择患者信息</h3>
+            <p>以便医生给出更准确的治疗，信息仅医生可见</p>
+        </div>
 
         <div class="patient-list">
-            <div class="patient-item" v-for="item in list" :key="item.id">
+            <div class="patient-item" :class="{ selected: patientId === item.id }" @click="selectedPatient(item)"
+                v-for="item in list" :key="item.id">
                 <div class="info">
                     <span class="name">{{ item.name }}</span>
                     <span class="id">{{ item.idCard.replace(/^(.{6}).+(.{4})$/, '\$1******\$2') }}</span>
@@ -144,6 +211,11 @@ const remove = () => {
             </div>
 
             <div class="patient-tip">最多可添加 6 人</div>
+        </div>
+
+        <!-- 底部按钮 -->
+        <div class="patient-next" v-if="isChange">
+            <van-button type="primary" @click="next" round block>下一步</van-button>
         </div>
 
         <!-- <CpRadioBtn :options="options" :modelValue="gender" @update:modelValue="gender = $event" /> -->
@@ -289,5 +361,29 @@ const remove = () => {
             height: 100%;
         }
     }
+}
+
+.patient-change {
+    padding: 15px;
+
+    >h3 {
+        font-weight: normal;
+        margin-bottom: 5px;
+    }
+
+    >p {
+        color: var(--cp-text3);
+    }
+}
+
+.patient-next {
+    padding: 15px;
+    background-color: #fff;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+    box-sizing: border-box;
 }
 </style>
