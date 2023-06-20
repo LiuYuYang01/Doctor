@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import type { TopDep } from '@/types/Consult'
-import { getAllDep } from '@/api/Consult'
+import { getAllDepAPI } from '@/api/Consult'
 import { useConsultStore } from '@/stores'
 
 const store = useConsultStore()
@@ -11,7 +11,7 @@ const allDep = ref<TopDep[]>([])
 
 // 获取科室的数据
 onMounted(async () => {
-    const { data } = await getAllDep()
+    const { data } = await getAllDepAPI()
 
     allDep.value = data
 })

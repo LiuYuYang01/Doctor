@@ -1,4 +1,4 @@
-import type { DoctorPage, FollowType, KnowledgePage, KnowledgeParams, PageParams, TopDep } from "@/types/Consult";
+import type { DoctorPage, FollowType, KnowledgePage, KnowledgeParams, PageParams, TopDep, Image } from "@/types/Consult";
 import Request from "@/utils/Request";
 
 // 知识加载
@@ -11,4 +11,13 @@ export const getDoctorPageAPI = (params: PageParams) => Request<DoctorPage>('GET
 export const followDoctorAPI = (id: string, type: FollowType = 'doc') => Request<any>('POST', '/like', { id, type })
 
 // 获取科室
-export const getAllDep = () => Request<TopDep[]>('GET', '/dep/all')
+export const getAllDepAPI = () => Request<TopDep[]>('GET', '/dep/all')
+
+// 上传图片
+export const uploadImageAPI = (file: File) => {
+    const fd = new FormData()
+
+    fd.append('file', file)
+
+    return Request<Image>('POST', '/upload', fd)
+}

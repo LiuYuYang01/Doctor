@@ -100,6 +100,7 @@ export type Image = {
   // 图片地址
   url: string
 }
+
 // 问诊记录
 export type Consult = {
   // 问诊记录ID
