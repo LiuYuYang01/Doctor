@@ -54,7 +54,8 @@ const onAfterRead: UploaderAfterRead = (item) => {
 
 // 删除图片
 const onDeleteImg = (item: UploaderFileListItem) => {
-    // TODO 
+    // 获取需要删除的图片url，再通过filter过滤掉，返回一个新数组
+    form.value.pictures = form.value.pictures?.filter(pic => pic.url !== item.url)
 }
 </script>
 
