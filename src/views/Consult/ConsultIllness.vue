@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import type { ConsultIllness } from '@/types/Consult'
 import { IllnessTime } from '@/enums'
 
@@ -28,8 +28,34 @@ const form = ref<ConsultIllness>({
 // 图片组件的类型
 import type { UploaderAfterRead, UploaderFileListItem } from 'vant/lib/uploader/types'
 import { uploadImageAPI } from '@/api/Consult';
+import type { Image } from '@/types/Consult'
 
-const fileList = ref([])
+const fileList = ref<Image[]>([])
+
+// 回显数据
+onMounted(() => {
+    // 判断表单中是否有数据
+    if (store.consult.illnessDesc) {
+        // 有就显示弹框，反之不显示
+        showConfirmDialog({
+            title: "温馨提示",
+            message: "是否恢复您之前填写的病情信息呢？",
+            confirmButtonColor: "var(--cp-primary)"
+        }).then(() => {
+            console.log("yes");
+
+            const { illnessDesc, illnessTime, consultFlag, pictures } = store.consult
+
+            // 数据回显
+            form.value = { illnessDesc, illnessTime, consultFlag, pictures }
+
+            // 图片回显
+            fileList.value = pictures || []
+        }).catch(() => {
+            console.log("no");
+        })
+    }
+})
 
 // 上传图片
 const onAfterRead: UploaderAfterRead = (item) => {
@@ -60,7 +86,7 @@ const onDeleteImg = (item: UploaderFileListItem) => {
 
 
 import { useRouter } from 'vue-router'
-import { showToast } from 'vant'
+import { showConfirmDialog, showToast } from 'vant'
 import { useConsultStore } from '@/stores'
 const store = useConsultStore()
 const router = useRouter()
@@ -131,7 +157,7 @@ const submit = () => {
 </template>
 
 <style lang="scss" scoped>
-.particulars-detail-popup{
+.particulars-detail-popup {
     background-color: red !important;
     color: #000 !important;
 }

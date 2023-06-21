@@ -107,35 +107,7 @@ const remove = () => {
 }
 
 import { useConsultStore } from '@/stores'
-import type { Image } from '@/types/Consult'
 const store = useConsultStore()
-
-const fileList = ref<Image[]>([])
-
-// 回显数据
-onMounted(() => {
-    // 判断表单中是否有数据
-    if (store.consult.illnessDesc) {
-        // 有就显示弹框，反之不显示
-        showConfirmDialog({
-            title: "温馨提示",
-            message: "是否恢复您之前填写的病情信息呢？",
-            confirmButtonColor: "var(--cp-primary)"
-        }).then(() => {
-            console.log("yes");
-
-            const { illnessDesc, illnessTime, consultFlag, pictures } = store.consult
-
-            // 数据回显
-            form.value = { illnessDesc, illnessTime, consultFlag, pictures }
-
-            // 图片回显
-            fileList.value = pictures || []
-        }).catch(() => {
-            console.log("no");
-        })
-    }
-})
 
 import { useRoute } from 'vue-router'
 import router from '@/router';
