@@ -77,8 +77,8 @@ const disabled = computed(
 const submit = () => {
     // 判断表单每一项不能为空
     if (!form.value.illnessDesc) return showToast({ message: "请输入病情描述", className: 'particulars-detail-popup' })
-    if (!form.value.illnessTime) return showToast("请选择症状持续时间")
-    if (!form.value.consultFlag) return showToast("请选择是否已经就诊")
+    if (!form.value.illnessTime === undefined) return showToast("请选择症状持续时间")
+    if (form.value.consultFlag === undefined) return showToast("请选择是否已经就诊")
 
     // 保存数据
     store.setIllness(form.value)

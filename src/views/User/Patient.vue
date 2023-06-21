@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import type { Patient } from '@/types/User';
 import { addPatientAPI, getPatientAPI, editPatientAPI, delPatientAPI } from '@/api/Patient'
 import { nameRules, idCardRules } from '@/utils/Rules'
-import { type FormInstance, showConfirmDialog, showNotify, formProps, showToast } from 'vant';
+import { type FormInstance, showConfirmDialog, showNotify, showToast } from 'vant';
 
 // 患者信息
 const list = ref<Patient[]>([])
