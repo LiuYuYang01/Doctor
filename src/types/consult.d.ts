@@ -161,3 +161,8 @@ export type ConsultOrderPreData = {
   // 实付款
   actualPayment: number
 }
+
+// ref与reactive相同点
+// 组合式api与选项式api的优势
+// 修改数据后用什么修改dom
+// v-model原理

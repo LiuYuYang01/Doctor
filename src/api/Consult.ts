@@ -21,3 +21,9 @@ export const uploadImageAPI = (file: File) => {
 
     return Request<Image>('POST', '/upload', fd)
 }
+
+import type { ConsultOrderPreData, ConsultOrderPreParams } from '@/types/Consult'
+
+// 拉取预支付订单信息
+export const getConsultOrderPreAPI = (params: ConsultOrderPreParams) =>
+    Request<ConsultOrderPreData>('GET', '/patient/consult/order/pre', params)

@@ -118,6 +118,7 @@ const isChange = computed(() => route.query.isChange === '1')
 // 点击列表高亮效果
 const patientId = ref<string>()
 
+// 选择患者
 const selectedPatient = (item: Patient) => {
     // 如果是选择患者
     if (isChange.value) {
@@ -144,7 +145,7 @@ const getPatientList = async () => {
     if (defaultFlag) return patientId.value = defaultFlag.id
 
     // 默认选择
-    patientId.value = list.value[0].id
+    if(list.value.length) patientId.value = list.value[0].id
 }
 
 onMounted(() => {
