@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getConsultOrderPreAPI } from '@/api/Consult'
+import { getConsultOrderPreAPI, createConsultOrderAPI, getConsultOrderPayUrlAPI } from '@/api/Consult'
 import { getPatientDetailAPI } from '@/api/User'
 import { useConsultStore } from '@/stores'
 import type { ConsultOrderPreData } from '@/types/Consult'
 import type { Patient } from '@/types/User'
-import { showToast } from 'vant';
+import { showConfirmDialog, showToast } from 'vant';
 
 const store = useConsultStore()
 
@@ -44,13 +44,67 @@ const agree = ref<boolean>(false)
 const show = ref<boolean>(false)
 const paymentMethod = ref<0 | 1>()
 
-const submit = async () => {    
-    if (!agree.value) return showToast('请勾选我已同意支付协议')
+const loading = ref<boolean>(false)
+const orderId = ref("")
 
-    console.log(123);
-    
+const submit = async () => {
+    // if (!agree.value) return showToast('请勾选我已同意支付协议')
+    if (!agree.value) return alert('请勾选我已同意支付协议')
+
+    loading.value = true
+
+    const { data } = await createConsultOrderAPI(store.consult)
+    orderId.value = data.id
+    console.log(orderId.value);
+
+
+    loading.value = false
 
     show.value = !show.value
+}
+
+import { onBeforeRouteLeave } from 'vue-router'
+import { useRouter } from 'vue-router';
+
+// 如果有ID就返回false，代表不允许页面回退
+onBeforeRouteLeave(() => {
+    if (orderId.value) return false
+})
+
+const router = useRouter()
+const onClose = () => {
+    return showConfirmDialog({
+        title: '关闭支付',
+        message: '取消支付将无法获得医生回复，医生接诊名额有限，是否确认关闭？',
+        cancelButtonText: '仍要关闭',
+        confirmButtonText: '继续支付',
+        confirmButtonColor: 'var(--cp-primary)'
+    })
+        // 确定
+        .then(() => {
+            return false
+        })
+        // 取消
+        .catch(() => {
+            orderId.value = ''
+            router.push('/home')
+            return true
+        })
+}
+
+// 微信（0） |  支付宝（1）
+const pay = async () => {
+    if (!paymentMethod.value) return showToast("请选择支付方式")
+
+    showToast("跳转支付")
+
+    const { data } = await getConsultOrderPayUrlAPI({
+        orderId: orderId.value,
+        paymentMethod: paymentMethod.value,
+        payCallback: "http://localhost:5173/room"
+    })
+
+    window.location.href = data.payUrl
 }
 </script>
 
@@ -84,10 +138,15 @@ const submit = async () => {
             <van-checkbox v-model="agree">我已同意 <span class="text">支付协议</span></van-checkbox>
         </div>
 
-        <van-submit-bar button-type="primary" :price="2900" button-text="立即支付" text-align="left" @click="submit"/>
+        <van-submit-bar button-type="primary" :price="2900" button-text="立即支付" text-align="left" :loading="loading"
+            @click="submit" />
     </div>
 
-    <van-action-sheet v-model:show="show" title="选择支付方式">
+    <!-- close-on-popstate：是否在页面回退时候自动关闭 -->
+    <!-- closeable：是否显示关闭按钮 -->
+    <!-- before-close：关闭前的回调 -->
+    <van-action-sheet v-model:show="show" title="选择支付方式" :close-on-popstate="false" :closeable="false"
+        :before-close="onClose">
         <div class="pay-type">
             <p class="amount">￥{{ payInfo?.actualPayment.toFixed(2) }}</p>
 
@@ -104,7 +163,7 @@ const submit = async () => {
             </van-cell-group>
 
             <div class="btn">
-                <van-button type="primary" round block>立即支付</van-button>
+                <van-button type="primary" round block @click="pay">立即支付</van-button>
             </div>
         </div>
     </van-action-sheet>
