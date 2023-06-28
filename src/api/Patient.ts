@@ -1,3 +1,4 @@
+import type { ConsultOrderItem } from "@/types/Consult";
 import type { Patient } from "@/types/User";
 import Request from "@/utils/Request";
 
@@ -12,3 +13,7 @@ export const editPatientAPI = (patient: Patient) => Request('PUT', '/patient/upd
 
 // 删除患者
 export const delPatientAPI = (id: string) => Request('DELETE', `/patient/del/${id}`)
+
+// 获取咨询订单详情
+export const getConsultOrderDetail = (orderId: string) =>
+    Request<ConsultOrderItem>('GET', '/patient/consult/order/detail', { orderId })
