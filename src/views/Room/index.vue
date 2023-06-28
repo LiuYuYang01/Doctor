@@ -2,13 +2,76 @@
 import RoomStatus from './components/RoomStatus.vue'
 import RoomAction from './components/RoomAction.vue'
 import RoomMessage from './components/RoomMessage.vue'
+
+import { onMounted, onUnmounted, ref } from 'vue'
+import { type Socket, io } from 'socket.io-client'
+import { baseURL } from '@/utils/Request'
+import { useUserStore } from '@/stores'
+import { useRoute } from 'vue-router'
+import type { Message, TimeMessages } from '@/types/Room'
+import { MsgType } from '@/enums'
+
+const store = useUserStore()
+const route = useRoute()
+
+let socket: Socket
+const list = ref<Message[]>([])
+
+onMounted(() => {
+    socket = io(baseURL, {
+        auth: {
+            token: `Bearer ${store.user?.token}`
+        },
+        query: {
+            orderId: route.query.orderId
+        }
+    })
+
+    socket.on('connect', () => {
+        // 建立连接成功
+        console.log("connect");
+    })
+
+    // 聊天记录
+    socket.on("chatMsgList", ({ data }: { data: TimeMessages[] }) => {
+        const arr: Message[] = []
+
+        data.forEach(item => {
+            arr.push({
+                msgType: MsgType.Notify,
+                msg: { content: item.createTime },
+                createTime: item.createTime,
+                id: item.createTime
+            })
+        })
+
+        list.value.unshift(...arr)
+        console.log(list.value,666);
+        
+    })
+
+    socket.on("error", (event) => {
+        // 错误异常消息
+        console.log("error");
+    })
+
+    socket.on("disconnect", () => {
+        // 已经断开连接
+        console.log("disconnect");
+    })
+})
+
+// 在组件卸载时关闭socket
+onUnmounted(() => {
+    socket.close()
+})
 </script>
 
 <template>
     <div class="room-page">
         <CpNavBar title="问诊室" />
         <RoomStatus></RoomStatus>
-        <RoomMessage></RoomMessage>
+        <RoomMessage :list="list"></RoomMessage>
         <RoomAction></RoomAction>
     </div>
 </template>

@@ -162,7 +162,16 @@ export type ConsultOrderPreData = {
   actualPayment: number
 }
 
-// ref与reactive相同点
-// 组合式api与选项式api的优势
-// 修改数据后用什么修改dom
-// v-model原理
+// 时间选项
+export const timeOptions = [
+  { label: '一周内', value: IllnessTime.Week },
+  { label: '一月内', value: IllnessTime.Month },
+  { label: '半年内', value: IllnessTime.HalfYear },
+  { label: '大于半年', value: IllnessTime.More }
+]
+
+// 是否就诊过
+export const flagOptions = [
+  { label: '就诊过', value: 0 },
+  { label: '没就诊过', value: 1 }
+]

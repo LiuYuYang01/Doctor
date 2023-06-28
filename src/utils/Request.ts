@@ -4,10 +4,12 @@ import router from '@/router'
 import { showToast } from 'vant'
 import type { Response } from '@/types/Response'
 
+export const baseURL = "https://consult-api.itheima.net"
+
 // 创建 axios 实例
 const instance = axios.create({
     // 项目API根路径
-    baseURL: "https://consult-api.itheima.net",
+    baseURL,
     // 请求超时的时间
     timeout: 5000
 })
