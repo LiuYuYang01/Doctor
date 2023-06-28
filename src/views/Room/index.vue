@@ -9,13 +9,17 @@ import { baseURL } from '@/utils/Request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
 import type { Message, TimeMessages } from '@/types/Room'
-import { MsgType } from '@/enums'
+import { MsgType, OrderType } from '@/enums'
+import type { ConsultOrderItem } from '@/types/Consult'
+import { getConsultOrderDetailAPI } from '@/api/Patient'
 
 const store = useUserStore()
 const route = useRoute()
 
 let socket: Socket
 const list = ref<Message[]>([])
+const consult = ref<ConsultOrderItem>()
+
 
 onMounted(() => {
     socket = io(baseURL, {
@@ -46,8 +50,14 @@ onMounted(() => {
         })
 
         list.value.unshift(...arr)
-        console.log(list.value,666);
-        
+    })
+
+    // 订单状态 在onMounted注册
+    socket.on('statusChange', async () => {
+        const res = await getConsultOrderDetailAPI(route.query.orderId as string)
+        consult.value = res.data
+
+        console.log(consult.value, 666);
     })
 
     socket.on("error", (event) => {
@@ -61,6 +71,11 @@ onMounted(() => {
     })
 })
 
+onMounted(async () => {
+    const res = await getConsultOrderDetailAPI(route.query.orderId as string)
+    consult.value = res.data
+})
+
 // 在组件卸载时关闭socket
 onUnmounted(() => {
     socket.close()
@@ -70,9 +85,9 @@ onUnmounted(() => {
 <template>
     <div class="room-page">
         <CpNavBar title="问诊室" />
-        <RoomStatus></RoomStatus>
+        <RoomStatus :status="consult?.status" :countdown="consult?.countdown"></RoomStatus>
         <RoomMessage :list="list"></RoomMessage>
-        <RoomAction></RoomAction>
+        <RoomAction :disabled="consult?.status !== OrderType.ConsultChat"></RoomAction>
     </div>
 </template>
 

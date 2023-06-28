@@ -1,11 +1,15 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineProps<{
+    disabled: boolean
+}>()
+</script>
 
 <template>
     <div class="room-action">
         <van-field type="text" class="input" :border="false" placeholder="问医生" autocomplete="off"
-            :disabled="true"></van-field>
-            
-        <van-uploader :preview-image="false" :disabled="true">
+            :disabled="disabled"></van-field>
+
+        <van-uploader :preview-image="false" :disabled="disabled">
             <cp-icon name="consult-img" />
         </van-uploader>
     </div>

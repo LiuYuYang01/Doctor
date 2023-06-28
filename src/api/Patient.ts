@@ -15,5 +15,5 @@ export const editPatientAPI = (patient: Patient) => Request('PUT', '/patient/upd
 export const delPatientAPI = (id: string) => Request('DELETE', `/patient/del/${id}`)
 
 // 获取咨询订单详情
-export const getConsultOrderDetail = (orderId: string) =>
+export const getConsultOrderDetailAPI = (orderId: string) =>
     Request<ConsultOrderItem>('GET', '/patient/consult/order/detail', { orderId })
